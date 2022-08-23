@@ -1,7 +1,7 @@
 package com.lesha.saga.kafka.dto
 
 import com.lesha.saga.repository.entities.ReservedBalance
-import com.lesha.saga.service.entity.State
+import com.lesha.saga.service.enumerated.State
 import java.math.BigDecimal
 import java.util.*
 

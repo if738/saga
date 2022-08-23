@@ -1,4 +1,4 @@
-package com.lesha.saga.service.entity
+package com.lesha.saga.service.enumerated
 
 enum class State {
     PENDING,

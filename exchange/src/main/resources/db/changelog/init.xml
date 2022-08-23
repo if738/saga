@@ -1,0 +1,41 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+<!--    <changeSet author="p.oleksii" id="customer_init">-->
+<!--        <createTable tableName="customer">-->
+<!--            <column name="id" type="${UUID}">-->
+<!--                <constraints primaryKey="true"/>-->
+<!--            </column>-->
+<!--            <column name="name" type="${NAME}"/>-->
+<!--            <column name="currency" type="VARCHAR(10)"/>-->
+<!--            <column name="balance" type="NUMERIC"/>-->
+<!--        </createTable>-->
+<!--    </changeSet>-->
+
+<!--    <changeSet author="p.oleksii" id="reserved_balance_init">-->
+<!--        <createTable tableName="reserved_balance">-->
+<!--            <column name="id" type="${UUID}">-->
+<!--                <constraints primaryKey="true"/>-->
+<!--            </column>-->
+<!--            <column name="customer_id" type="${${UUID}}">-->
+<!--                <constraints nullable="false"/>-->
+<!--            </column>-->
+<!--            <column name="order_id" type="${${UUID}}">-->
+<!--                <constraints nullable="false"/>-->
+<!--            </column>-->
+<!--            <column name="currency" type="VARCHAR(10)">-->
+<!--                <constraints nullable="false"/>-->
+<!--            </column>-->
+<!--            <column name="reserved_balance" type="NUMERIC">-->
+<!--                <constraints nullable="false"/>-->
+<!--            </column>-->
+<!--            <column name="state" type="VARCHAR(64)">-->
+<!--                <constraints nullable="false"/>-->
+<!--            </column>-->
+<!--        </createTable>-->
+<!--    </changeSet>-->
+
+</databaseChangeLog>

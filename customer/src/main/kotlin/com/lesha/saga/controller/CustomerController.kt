@@ -10,8 +10,10 @@ import java.util.*
 class CustomerController(private val service: CustomerService) {
 
     @PostMapping
-    fun create(@RequestBody entity: Customer): Customer = service.save(entity)
+    fun create(@RequestBody entity: Customer) =
+        service.save(entity)
 
     @GetMapping
-    fun get(@RequestParam id: UUID): Customer = service.getOrThrow(id)
+    fun get(@RequestParam id: UUID) =
+        service.getOrThrow(id)
 }

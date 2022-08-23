@@ -1,2 +1,23 @@
-server.port=0
-spring.application.name=exchange
+server.port: 0
+spring:
+  application:
+    name: exchange
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:exchange}
+    username: ${DB_USERNAME:app_user}
+    password: ${DB_PASSWORD:Qw123456}
+  liquibase:
+    change-log: classpath:/db/changelog-master.xml
+    contexts: local
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+    producer:
+      bootstrap-servers: localhost:9092
+      topic: topic
+    event:
+      group_id: ${spring.application.name}
+  jpa:
+    show-sql: false
+    database: POSTGRESQL

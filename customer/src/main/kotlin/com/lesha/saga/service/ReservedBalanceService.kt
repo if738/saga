@@ -2,11 +2,9 @@ package com.lesha.saga.service
 
 import com.lesha.saga.kafka.KafkaProducer
 import com.lesha.saga.kafka.consumer.ActionType
-import com.lesha.saga.kafka.consumer.EventDto
-import com.lesha.saga.kafka.dto.ReservedBalanceDto
 import com.lesha.saga.repository.ReservedBalanceRepository
 import com.lesha.saga.repository.entities.ReservedBalance
-import com.lesha.saga.service.entity.State
+import com.lesha.saga.service.enumerated.State
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.util.UUID
@@ -24,28 +22,22 @@ class ReservedBalanceService(
             .orElseThrow { throw RuntimeException("Can't find $reservedBalanceId") }
     }
 
-    fun create(reservedBalance: ReservedBalance): ReservedBalance {
-        reservedBalance.customerId?.let { customerService.getOrThrow(it) }
-        return reservedBalanceRepository.save(reservedBalance)
-    }
-
-
     @Transactional(rollbackOn = [Exception::class])
-    fun reserve(customerId: UUID, orderId: UUID, reserve: BigDecimal): ReservedBalance {
+    fun reserve(customerId: UUID, offerId: UUID, count: BigDecimal): ReservedBalance {
         val customer = customerService.getOrThrow(customerId)
         val balance = customer.balance
-        if (balance < reserve) {
-            throw RuntimeException("Not enough money customer=$customer reserve=$reserve")
+        if (balance < count) {
+            throw RuntimeException("Not enough money customer=$customer reserve=$count")
         }
-        val subtractedBalance = balance.minus(reserve)
+        val subtractedBalance = balance.minus(count)
         customer.balance = subtractedBalance
         customerService.save(customer)
         return reservedBalanceRepository.save(
             ReservedBalance(
-                orderId = orderId,
+                offerId = offerId,
                 customerId = customerId,
                 currency = customer.currency,
-                reservedBalance = reserve,
+                reservedBalance = count,
                 state = State.PENDING
             )
         )

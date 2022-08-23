@@ -7,16 +7,18 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-data class ReservedBalance(
-
+data class Offer(
     @Id
+    @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     val id: UUID = UUID.randomUUID(),
     val customerId: UUID? = null,
-    val offerId: UUID? = null,
-    val currency: String? = null,
-    val reservedBalance: BigDecimal = BigDecimal.ZERO,
+    val reservedBalanceId: UUID? = null,
+    var valueFrom: BigDecimal = BigDecimal.ZERO,
+    var valueTo: BigDecimal? = BigDecimal.ZERO,
+    val currencyFrom: String? = null,
+    val currencyTo: String? = null,
     @Enumerated(EnumType.STRING)
-    var state: State = State.PENDING
-
+    var state: State = State.PENDING,
+    val findBest: Boolean = false,
 )

@@ -4,20 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.hibernate.annotations.common.util.impl.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
-import org.springframework.kafka.annotation.PartitionOffset
-import org.springframework.kafka.annotation.TopicPartition
 import org.springframework.stereotype.Component
 
 @Component
 class KafkaListenerResolver(
     private val listenerHandler: List<ListenerHandler<*>>,
-    private val om: ObjectMapper,
 ) {
 
     private val log = LoggerFactory.logger(this::class.java)
 
-    @KafkaListener(topics = ["topic"], groupId = "\${spring.kafka.event.group_id}",
-        topicPartitions = [TopicPartition(topic = "topic", partitions = ["1"])])
+    @KafkaListener(topics = ["topic"], groupId = "\${spring.kafka.event.group_id}")
     fun listen(record: ConsumerRecord<String, Any>) {
         val payload = record.value()
         val actionType = getActionType(record)
@@ -29,7 +25,7 @@ class KafkaListenerResolver(
         } catch (e: Exception) {
             log.trace("Action Type Not supported $actionType")
         }
-        log.trace("Record `received value=${record}")
+        log.trace("Record received value=${record}")
     }
 
     private fun getActionType(record: ConsumerRecord<String, Any>): ActionType {

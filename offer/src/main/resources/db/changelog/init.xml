@@ -1,0 +1,36 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+    <changeSet author="p.oleksii" id="offer_init">
+        <createTable tableName="offer">
+            <column name="id" type="${UUID}">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="${NAME}"/>
+            <column name="currency_from" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency_to" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value_from" type="NUMERIC">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value_to" type="NUMERIC"/>
+            <column name="customer_id" type="${UUID}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reserved_balance_id" type="${UUID}"/>
+            <column name="state" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="find_best" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

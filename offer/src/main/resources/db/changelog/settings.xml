@@ -1,0 +1,21 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <property name="UUID" value="UUID" dbms="postgresql, h2"/>
+
+    <property name="LONG" value="bigint" dbms="postgresql, h2"/>
+    <property name="STRING" value="varchar(1024)" dbms="postgresql, h2"/>
+
+    <property name="CURRENCY_ID" value="char(3)" dbms="postgresql, h2"/>
+    <property name="JSON_TYPE" value="jsonb" dbms="postgresql"/>
+    <property name="JSON_TYPE" value="varchar" dbms="h2"/>
+    <property name="TYPE" value="varchar(32)" dbms="postgresql, h2"/>
+    <property name="VERSION" value="bigint" dbms="postgresql, h2"/>
+    <property name="NAME" value="varchar(256)" dbms="postgresql, h2"/>
+    <property name="STATUS" value="varchar(256)" dbms="postgresql, h2"/>
+    <property name="DESCRIPTION" value="varchar(2048)" dbms="postgresql, h2"/>
+
+</databaseChangeLog>
