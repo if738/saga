@@ -8,7 +8,7 @@ data class ReservedBalanceDto(
 
     var id: UUID,
     var customerId: UUID,
-    var orderId: UUID,
+    var offerId: UUID,
     var currency: String? = null,
     var reservedBalance: BigDecimal = BigDecimal.ZERO,
     var state: State = State.PENDING,

@@ -14,7 +14,7 @@ abstract class AbstractListenerHandler<E>(
         return om.writeValueAsString(result)
     }
 
-    abstract override fun handle(entity: E)
+    abstract override fun handle(dto: E)
 
     abstract override fun mapEventToEntity(event: EventDto): E
 

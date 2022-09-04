@@ -1,41 +1,44 @@
 package com.lesha.saga.kafka.consumer
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.hibernate.annotations.common.util.impl.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
-import org.springframework.kafka.annotation.PartitionOffset
-import org.springframework.kafka.annotation.TopicPartition
 import org.springframework.stereotype.Component
 
 @Component
 class KafkaListenerResolver(
     private val listenerHandler: List<ListenerHandler<*>>,
-    private val om: ObjectMapper,
 ) {
 
     private val log = LoggerFactory.logger(this::class.java)
 
-    @KafkaListener(topics = ["topic"], groupId = "\${spring.kafka.event.group_id}",
-        topicPartitions = [TopicPartition(topic = "topic", partitions = ["1"])])
+    @KafkaListener(topics = ["topic"], groupId = "\${spring.kafka.event.group_id}")
     fun listen(record: ConsumerRecord<String, Any>) {
         val payload = record.value()
-        val actionType = getActionType(record)
+        val actionType = getActionType(record) ?: return
+        var handlers: List<ListenerHandler<*>>? = null
         try {
-            listenerHandler.filter { it.actionType == actionType }
-                .forEach {
-                    it.apply(EventDto(actionType, payload as String?))
-                }
+            handlers = listenerHandler.filter { it.actionType == actionType }
         } catch (e: Exception) {
             log.trace("Action Type Not supported $actionType")
         }
-        log.trace("Record `received value=${record}")
+        handlers?.forEach {
+            it.apply(EventDto(actionType, payload as String?))
+        }
+        log.trace("Record received value=${record}")
     }
 
-    private fun getActionType(record: ConsumerRecord<String, Any>): ActionType {
+    private fun getActionType(record: ConsumerRecord<String, Any>): ActionType? {
         val headers = record.headers().toMutableList()
-        val actionTypeByteArray = headers.find { it.key() == "actionType" }?.value()
-        return ActionType.valueOf(String(actionTypeByteArray as ByteArray))
+        val actionTypeByteArray = headers.find { it.key() == "actionType" }?.value() ?: return null
+        var actionTypeString: String? = null
+        try {
+            actionTypeString = String(actionTypeByteArray)
+            return ActionType.valueOf(actionTypeString)
+        } catch (ex: Exception) {
+            log.warn("KafkaListenerResolver. actionType=$actionTypeString not found. supported ${ActionType.values()}")
+            return null
+        }
     }
 
 }

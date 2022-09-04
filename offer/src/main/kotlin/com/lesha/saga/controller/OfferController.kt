@@ -7,12 +7,13 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping("/customer")
+@RequestMapping("/offer")
 class OfferController(private val service: OfferService) {
 
     @PostMapping
     fun create(@RequestBody entity: Offer) {
         entity.state = State.PENDING
+        entity.reservedBalanceId = null
         service.save(entity)
     }
 

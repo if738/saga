@@ -22,13 +22,9 @@ class KafkaProducer(
         val payload = om.writeValueAsString(dto)
         val recordHeader = RecordHeader("actionType", actionType.name.toByteArray())
         val producerRecord = ProducerRecord<String, Any>(
-            notificationTopic, 1, null, null, payload, listOf(recordHeader)
-        )
-        val producerRecord1 = ProducerRecord<String, Any>(
-            notificationTopic, 2, null, null, payload, listOf(recordHeader)
+            notificationTopic, 0, null, null, payload, listOf(recordHeader)
         )
         kafkaTemplate.usingCompletableFuture().send(producerRecord)
-        kafkaTemplate.usingCompletableFuture().send(producerRecord1)
     }
 
 }

@@ -13,7 +13,7 @@ data class Offer(
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     val id: UUID = UUID.randomUUID(),
     val customerId: UUID? = null,
-    val reservedBalanceId: UUID? = null,
+    var reservedBalanceId: UUID? = null,
     var valueFrom: BigDecimal = BigDecimal.ZERO,
     var valueTo: BigDecimal? = BigDecimal.ZERO,
     val currencyFrom: String? = null,

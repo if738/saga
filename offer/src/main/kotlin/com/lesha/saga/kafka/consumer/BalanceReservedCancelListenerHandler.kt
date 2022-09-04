@@ -16,7 +16,7 @@ class BalanceReservedCancelListenerHandler(
         return om.readValue(event.payload, ReservedBalanceDto::class.java)
     }
 
-    override fun handle(entity: ReservedBalanceDto) {
+    override fun handle(dto: ReservedBalanceDto) {
         println("WOOHOO, we can see BalanceReservedCancelListenerHandler events")
     }
 

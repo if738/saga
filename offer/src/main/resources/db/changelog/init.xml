@@ -33,4 +33,13 @@
         </createTable>
     </changeSet>
 
+    <changeSet author="p.oleksii" id="customer_init">
+        <createTable tableName="customer">
+            <column name="id" type="${UUID}">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="${NAME}"/>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>

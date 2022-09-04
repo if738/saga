@@ -10,8 +10,8 @@ import java.util.*
 class ReservedBalanceController(private val service: ReservedBalanceService) {
 
     @PostMapping("/reserve")
-    fun create(@RequestParam customerId: UUID, orderId: UUID, count: BigDecimal) =
-        service.reserve(customerId, orderId, count)
+    fun create(@RequestParam customerId: UUID, offerId: UUID, count: BigDecimal) =
+        service.reserve(customerId, offerId, count)
 
     @GetMapping
     fun get(@RequestParam id: UUID) =

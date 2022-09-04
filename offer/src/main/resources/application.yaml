@@ -18,6 +18,9 @@ spring:
       topic: topic
     event:
       group_id: ${spring.application.name}
+    retry:
+      topic:
+        attempts: 3
   jpa:
     show-sql: false
     database: POSTGRESQL

@@ -23,7 +23,7 @@
             <column name="customer_id" type="${${UUID}}">
                 <constraints nullable="false"/>
             </column>
-            <column name="order_id" type="${${UUID}}">
+            <column name="offer_id" type="${${UUID}}">
                 <constraints nullable="false"/>
             </column>
             <column name="currency" type="VARCHAR(10)">

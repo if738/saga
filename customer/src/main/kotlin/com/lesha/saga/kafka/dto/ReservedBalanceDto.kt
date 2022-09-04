@@ -6,21 +6,27 @@ import java.math.BigDecimal
 import java.util.*
 
 data class ReservedBalanceDto(
-
     var id: UUID,
     var customerId: UUID,
-    var orderId: UUID,
+    var offerId: UUID,
     var currency: String? = null,
     var reservedBalance: BigDecimal = BigDecimal.ZERO,
-    var state: State = State.PENDING
-
+    var state: State = State.PENDING,
 ) {
-    fun map(reservedBalance: ReservedBalance): ReservedBalanceDto {
-        this.id = reservedBalance.id
-        this.customerId = reservedBalance.customerId!!
-        this.currency = reservedBalance.currency
-        this.reservedBalance = reservedBalance.reservedBalance
-        this.state = reservedBalance.state
-        return this
+
+    companion object {
+        fun map(reservedBalance: ReservedBalance): ReservedBalanceDto {
+            return ReservedBalanceDto(
+                reservedBalance.id,
+                reservedBalance.customerId
+                    ?: throw RuntimeException("ReservedBalanceDto.map.reservedBalance.customerId required"),
+                reservedBalance.offerId
+                    ?: throw RuntimeException("ReservedBalanceDto.map.reservedBalance.offerId required"),
+                reservedBalance.currency,
+                reservedBalance.reservedBalance,
+                reservedBalance.state,
+            )
+        }
     }
+
 }

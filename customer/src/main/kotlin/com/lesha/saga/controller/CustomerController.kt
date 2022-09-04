@@ -11,7 +11,7 @@ class CustomerController(private val service: CustomerService) {
 
     @PostMapping
     fun create(@RequestBody entity: Customer) =
-        service.save(entity)
+        service.create(entity)
 
     @GetMapping
     fun get(@RequestParam id: UUID) =
