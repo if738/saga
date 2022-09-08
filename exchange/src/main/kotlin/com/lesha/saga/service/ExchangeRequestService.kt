@@ -1,12 +1,14 @@
 package com.lesha.saga.service
 
 import com.lesha.saga.kafka.KafkaProducer
-import com.lesha.saga.kafka.consumer.ActionType
 import com.lesha.saga.repository.ExchangeRequestRepository
 import com.lesha.saga.repository.entities.ExchangeRequest
 import com.lesha.saga.service.enumerated.State
+import org.apache.kafka.common.errors.InvalidRequestException
 import org.hibernate.annotations.common.util.impl.LoggerFactory
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
@@ -18,31 +20,38 @@ class ExchangeRequestService(
 
     private val log = LoggerFactory.logger(this::class.java)
 
-    @Transactional
-    fun process(exchangeRequest: ExchangeRequest) {
-        val exchangeRequestResult = repository.findByOfferId(exchangeRequest.offerId!!)
-        if (exchangeRequestResult != null) {
-            if (exchangeRequestResult.state == State.PENDING && exchangeRequest.state == State.MONEY_RESERVED) {
-                exchangeRequestResult.state = State.MONEY_RESERVED
-                repository.save(exchangeRequestResult)
-                log.debug("ExchangeRequestService. created exchangeRequest=$exchangeRequest")
-                kafkaProducer.sendMessage(ActionType.EXCHANGE_OFFER_RESERVED, exchangeRequest)
-                return
-            }
-            if (exchangeRequest.state == State.MONEY_RESERVED) {
-                log.debug("ExchangeRequestService. skipped exchangeRequest=$exchangeRequest")
-                return
-            }
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    fun process(exchangeRequest: ExchangeRequest, stateTo: State): ExchangeRequest {
+        val exchangeRequestExisted = repository.findByOfferId(exchangeRequest.offerId!!)
+        if (exchangeRequestExisted == null) {
+            val exchangeRequestCopy = exchangeRequest.copy()
+            exchangeRequestCopy.state = stateTo
+            val exchangeRequestResult = repository.save(exchangeRequestCopy)
+            log.debug("ExchangeRequestService. Processed exchangeRequest=$exchangeRequestCopy")
+            return exchangeRequestResult
         }
-        repository.save(exchangeRequest)
-        kafkaProducer.sendMessage(ActionType.EXCHANGE_OFFER_PENDING, exchangeRequest)
-        log.debug("ExchangeRequestService. created exchangeRequest=$exchangeRequest")
-    }
+        if (exchangeRequestExisted.state.priority >= stateTo.priority) {
+            throw RuntimeException("ExchangeRequestService. State sequence violated. stored state=${exchangeRequestExisted.state} " +
+                    "requested state=$stateTo")
+        }
+            exchangeRequestExisted.state = stateTo
+        val exchangeRequestResult = repository.save(exchangeRequestExisted)
+        log.debug("ExchangeRequestService. Processed exchangeRequest=$exchangeRequest")
+        return exchangeRequestResult
+        }
 
     fun update(exchangeRequest: ExchangeRequest): ExchangeRequest {
         if (!repository.existsById(exchangeRequest.id))
             throw RuntimeException("ExchangeRequest with id=${exchangeRequest.id} is not exist, can't update")
         return repository.save(exchangeRequest)
+    }
+
+    fun saveAll(exchangeRequests: List<ExchangeRequest>): List<ExchangeRequest> {
+        return repository.saveAll(exchangeRequests)
+    }
+
+    fun getAllWithMoneyReserved(): List<ExchangeRequest> {
+        return repository.findAllByState()
     }
 
     fun getOrThrow(id: UUID): ExchangeRequest =

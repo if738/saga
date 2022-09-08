@@ -1,5 +1,6 @@
 package com.lesha.saga.repository.entities
 
+import com.lesha.saga.repository.entities.enums.Currency
 import com.lesha.saga.service.enumerated.State
 import org.hibernate.annotations.GenericGenerator
 import java.math.BigDecimal
@@ -14,7 +15,8 @@ data class ReservedBalance(
     val id: UUID = UUID.randomUUID(),
     val customerId: UUID? = null,
     val offerId: UUID? = null,
-    val currency: String? = null,
+    @Enumerated(EnumType.STRING)
+    val currency: Currency = Currency.USD,
     val reservedBalance: BigDecimal = BigDecimal.ZERO,
     @Enumerated(EnumType.STRING)
     var state: State = State.PENDING

@@ -8,8 +8,8 @@ import com.lesha.saga.service.enumerated.State
 import org.hibernate.annotations.common.util.impl.LoggerFactory
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
+import kotlin.random.Random
 
-//TODO FOR TESTING
 @Component
 class CustomerBalanceReservedListenerHandler(
     private val om: ObjectMapper,
@@ -25,15 +25,22 @@ class CustomerBalanceReservedListenerHandler(
     }
 
     override fun handle(dto: OfferDto) {
-        if (dto.valueFrom == BigDecimal.ZERO) throw RuntimeException("valueFrom can't be null")
+        //throw error with 1/30 chance
         try {
+//            if (Random.nextInt(30) == 1) throw AssertionError("ExpectedException! 1/30 change!")
+            if (dto.valueFrom == BigDecimal.ZERO) throw RuntimeException("valueFrom can't be null")
+            if (dto.state != State.MONEY_RESERVED) throw RuntimeException("Can process only State.MONEY_RESERVED")
             val offer = dto.map()
-            exchangeRequestService.process(offer)
-            log.debug("CustomerBalanceReservedListenerHandler. processed=$dto")
-        } catch (ex: Exception) {
-            log.warn("ReservationFailed. dto=$dto")
+            val exchangeRequest = exchangeRequestService.process(offer, State.MONEY_RESERVED)
+            kafkaProducer.sendMessage(ActionType.EXCHANGE_OFFER_RESERVED, exchangeRequest)
+            log.debug("CustomerBalanceReservedListenerHandler. Processed dto=$dto")
+        } catch (aEx: AssertionError) {
+            log.debug("ExpectedException! 1/30 change!")
+        } catch (ex: RuntimeException) {
+            log.warn("CustomerBalanceReservedListenerHandler. Failed dto=$dto")
             dto.state = State.FAILED
-            kafkaProducer.sendMessage(ActionType.CUSTOMER_BALANCE_RESERVE_FAILED, dto)
+            kafkaProducer.sendMessage(ActionType.EXCHANGE_OFFER_RESERVATION_FAILED, dto)
+            throw ex
         }
     }
 }

@@ -1,10 +1,9 @@
 package com.lesha.saga.service.enumerated
 
-enum class State {
-    PENDING,
-    MONEY_RESERVED,
-    CANCELED,
-    COMPLETED,
-    CANCEL_PENDING,
-    FAILED,
+enum class State(val priority: Short) {
+    PENDING(1),
+    MONEY_RESERVED(2),
+    CANCELED(3),
+    COMPLETED(3),
+    FAILED(3),
 }

@@ -6,10 +6,10 @@ import com.lesha.saga.kafka.dto.OfferDto
 import com.lesha.saga.service.ReservedBalanceService
 import com.lesha.saga.service.enumerated.State
 import org.hibernate.annotations.common.util.impl.LoggerFactory
+import org.springframework.kafka.KafkaException
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
-//TODO FOR TESTING
 @Component
 class OfferCreatedListenerHandler(
     private val om: ObjectMapper,
@@ -27,14 +27,18 @@ class OfferCreatedListenerHandler(
     override fun handle(dto: OfferDto) {
         if (dto.valueFrom == BigDecimal.ZERO) throw RuntimeException("valueFrom can't be null")
         try {
-            reservedBalanceService.reserve(dto.customerId, dto.id, dto.valueFrom)
+            reservedBalanceService.reserve(dto.customerId, dto.id, dto.valueFrom, dto.currencyFrom)
             val copyOfferDto = dto.copy()
             copyOfferDto.state = State.MONEY_RESERVED
             kafkaProducer.sendMessage(ActionType.CUSTOMER_BALANCE_RESERVED, copyOfferDto)
-        } catch (ex: Exception) {
-            log.warn("ReservationFailed. dto=$dto exception=$ex")
+        } catch (aEx: ArithmeticException) {
+            log.trace("Not enought money")
+        }
+        catch (ex: Exception) {
+            log.warn("OfferCreatedListenerHandler. ReservationFailed. dto=$dto exception=$ex")
             dto.state = State.FAILED
             kafkaProducer.sendMessage(ActionType.CUSTOMER_BALANCE_RESERVE_FAILED, dto)
+            throw ex
         }
     }
 }

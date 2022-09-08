@@ -37,7 +37,7 @@ class KafkaListenerResolver(
             actionTypeString = String(actionTypeByteArray)
             ActionType.valueOf(actionTypeString)
         } catch (ex: Exception) {
-            log.warn("KafkaListenerResolver. actionType=$actionTypeString not found. supported ${ActionType.values()}")
+            log.debug("KafkaListenerResolver. actionType=$actionTypeString not found. supported ${ActionType.values()}")
             null
         }
     }

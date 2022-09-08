@@ -22,7 +22,7 @@ data class ReservedBalanceDto(
                     ?: throw RuntimeException("ReservedBalanceDto.map.reservedBalance.customerId required"),
                 reservedBalance.offerId
                     ?: throw RuntimeException("ReservedBalanceDto.map.reservedBalance.offerId required"),
-                reservedBalance.currency,
+                reservedBalance.currency?.name,
                 reservedBalance.reservedBalance,
                 reservedBalance.state,
             )

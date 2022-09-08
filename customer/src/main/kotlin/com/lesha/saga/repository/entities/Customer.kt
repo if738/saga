@@ -14,6 +14,4 @@ data class Customer(
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     val id: UUID = UUID.randomUUID(),
     val name: String? = null,
-    val currency: String? = null,
-    var balance: BigDecimal = BigDecimal.ZERO
 )

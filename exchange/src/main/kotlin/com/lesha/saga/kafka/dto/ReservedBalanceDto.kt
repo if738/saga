@@ -10,5 +10,5 @@ data class ReservedBalanceDto(
     var offerId: UUID,
     var currency: String? = null,
     var reservedBalance: BigDecimal = BigDecimal.ZERO,
-    var state: State = State.PENDING,
+    var state: State = State.MONEY_RESERVED,
 )

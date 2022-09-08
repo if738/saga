@@ -7,17 +7,15 @@ import com.lesha.saga.service.ExchangeRequestService
 import com.lesha.saga.service.enumerated.State
 import org.hibernate.annotations.common.util.impl.LoggerFactory
 import org.springframework.stereotype.Component
-import java.math.BigDecimal
 
-//TODO FOR TESTING
 @Component
-class OfferCreatedListenerHandler(
+class OfferCancellationPendingListenerHandler(
     private val om: ObjectMapper,
     private val exchangeRequestService: ExchangeRequestService,
     private val kafkaProducer: KafkaProducer,
 ) : AbstractListenerHandler<OfferDto>(om) {
 
-    override val actionType: ActionType = ActionType.OFFER_CREATED
+    override val actionType: ActionType = ActionType.OFFER_CANCELLATION_PENDING
     private val log = LoggerFactory.logger(this::class.java)
 
     override fun mapEventToEntity(event: EventDto): OfferDto {
@@ -25,15 +23,16 @@ class OfferCreatedListenerHandler(
     }
 
     override fun handle(dto: OfferDto) {
-        if (dto.valueFrom == BigDecimal.ZERO) throw RuntimeException("valueFrom can't be null")
         try {
             val offer = dto.map()
-            exchangeRequestService.process(offer)
-            log.debug("OfferCreatedListenerHandler. processed=$dto")
+            val exchangeRequest = exchangeRequestService.process(offer, State.CANCELED)
+            kafkaProducer.sendMessage(ActionType.EXCHANGE_OFFER_CANCELED, exchangeRequest)
+            log.debug("OfferCancellationPendingListenerHandler. processed dto=$dto")
         } catch (ex: Exception) {
-            log.warn("ReservationFailed. dto=$dto")
+            log.warn("OfferCancellationPendingListenerHandler. Failed. dto=$dto")
             dto.state = State.FAILED
-            kafkaProducer.sendMessage(ActionType.CUSTOMER_BALANCE_RESERVE_FAILED, dto)
+            kafkaProducer.sendMessage(ActionType.EXCHANGE_OFFER_CANCELLATION_FAILED, dto)
+            throw ex
         }
     }
 }

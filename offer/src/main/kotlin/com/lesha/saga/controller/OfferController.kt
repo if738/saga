@@ -11,10 +11,15 @@ import java.util.*
 class OfferController(private val service: OfferService) {
 
     @PostMapping
-    fun create(@RequestBody entity: Offer) {
+    fun create(@RequestBody entity: Offer): Offer {
         entity.state = State.PENDING
         entity.reservedBalanceId = null
-        service.save(entity)
+        return service.save(entity)
+    }
+
+    @PutMapping("/cancel")
+    fun cancel(@RequestParam id: UUID) {
+        service.cancelPending(id)
     }
 
     @GetMapping

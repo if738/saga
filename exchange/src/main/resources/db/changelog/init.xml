@@ -15,9 +15,7 @@
             <column name="currency_to" type="VARCHAR(10)">
                 <constraints nullable="false"/>
             </column>
-            <column name="value_from" type="NUMERIC">
-                <constraints nullable="false"/>
-            </column>
+            <column name="value_from" type="NUMERIC"/>
             <column name="value_to" type="NUMERIC"/>
             <column name="offer_id" type="${UUID}">
                 <constraints nullable="false"/>
@@ -26,6 +24,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="find_best" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="operation" type="VARCHAR(64)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
